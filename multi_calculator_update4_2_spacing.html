@@ -1,0 +1,276 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#2563eb"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="apple-mobile-web-app-title" content="멀티계산기"><title>멀티 금융 계산기</title><style>body{font-family:system-ui;margin:0;background:#f5f6f8;color:#17191d}*{box-sizing:border-box}main{max-width:1000px;margin:auto;padding:14px}.tabs,.row,.send{display:flex;gap:7px;flex-wrap:wrap}button,input,select{font:inherit}button{min-height:44px;border:1px solid #ddd;background:#fff;border-radius:10px;padding:7px 11px}.primary{background:#2563eb;color:white;border-color:#2563eb}.row button.on,.counts button.on{background:#2563eb;color:white;border-color:#2563eb}.pane.on{display:block!important;background:transparent!important;color:#17191d!important}.tabs button{flex:1}.pane{display:none;margin-top:12px}.pane.on{display:block}.card,.calc{background:white;border:1px solid #ddd;border-radius:16px;padding:13px}.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.screen{background:#f7f8fa;border-radius:12px;padding:10px;text-align:right;margin:8px 0}.expr{font-size:12px;color:#777;min-height:18px}.display{font-size:28px;font-weight:800}.keys{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.keys button{font-weight:700}.op{background:#eaf1ff}.calc input{width:100%;border:0;border-bottom:1px solid #ddd;padding:7px;font-weight:700}.card label{display:block;margin:10px 0;font-weight:650}.card input,.card select{width:100%;min-height:44px;border:1px solid #ddd;border-radius:10px;padding:8px;margin-top:5px}.two{display:grid;grid-template-columns:1fr 1fr;gap:8px}.primary{width:100%;margin-top:8px}.result{background:#f7f8fa;border-radius:12px;padding:12px;margin-top:10px;line-height:1.7}.big{font-size:21px;font-weight:800}.note{font-size:12px;color:#777;margin-top:8px}.history{font-size:12px;color:#777;margin-top:8px;max-height:80px;overflow:auto}@media(max-width:650px){.grid,.two{grid-template-columns:1fr}.tabs button{font-size:12px;padding:5px}}</style><style>
+:root{--blue:#4f6ef7;--ink:#171a21;--muted2:#8a9099;--surface:#ffffff;--wash:#f6f7f9}
+body{background:var(--wash)!important}.app{max-width:760px!important;padding:18px 14px 96px!important}h1{font-size:24px!important;letter-spacing:-.8px;margin:2px 0 18px!important}
+.tabs{position:fixed!important;left:50%!important;transform:translateX(-50%)!important;bottom:0!important;width:min(760px,100%)!important;margin:0!important;padding:8px 10px max(8px,env(safe-area-inset-bottom))!important;background:rgba(255,255,255,.96)!important;border-top:1px solid #e9ebef!important;z-index:20!important;display:grid!important;grid-template-columns:repeat(5,1fr)!important}
+.tabs button{border:0!important;background:transparent!important;border-radius:12px!important;color:#8b919b!important;min-height:54px!important}.tabs button.on{background:#eef1ff!important;color:#3f5ee8!important}
+.bar,.card,.calc{box-shadow:none!important;border:1px solid #e7e9ed!important;border-radius:20px!important}.bar{background:transparent!important;border:0!important;padding:2px 0 10px!important}.counts button{border-radius:999px!important;min-width:52px!important}.grid{grid-template-columns:1fr!important}.calc{padding:16px!important}.screen{background:#f7f8fa!important;border:0!important;padding:16px!important}.display{font-size:34px!important}.keys button{border:0!important;background:#f4f5f7!important}.keys .op{background:#edf1ff!important}.transfer button,.send button{background:#fff!important}.primary{background:var(--blue)!important}.result{background:#fff!important;border:1px solid #e7e9ed!important}.big{font-size:25px!important}
+@media(min-width:700px){.grid{grid-template-columns:repeat(2,1fr)!important}}
+</style><style>
+main{max-width:720px!important;padding:18px 14px 92px!important}body{color:#17191d!important}h2{color:#17191d!important}.pane.on{background:transparent!important;color:#17191d!important}.pane h2{font-size:22px;margin:4px 0 2px}.pane>.note{margin:0 0 14px!important}.card label{color:#17191d!important;font-size:14px!important;font-weight:800!important}.card label small{display:block;color:#777f8b!important;font-size:11px!important;font-weight:500!important;margin:3px 0 6px}.card input,.card select{color:#17191d!important;background:#fff!important;min-height:50px!important}.card{border:1px solid #e4e7eb!important;border-radius:18px!important;padding:16px!important}.primary{min-height:50px!important;border-radius:13px!important}.result{color:#17191d!important}.result:empty{display:none}.tabs button.on{background:#eef2ff!important;color:#315eea!important}.row button.on{background:#315eea!important;color:#fff!important}@media(max-width:650px){.two{grid-template-columns:1fr 1fr!important}}@media(max-width:360px){.two{grid-template-columns:1fr!important}}
+</style>
+<style>
+.money-input{text-align:right;font-weight:750}
+#fxStatus{background:#f7f8fa;border-radius:10px;padding:9px 10px}
+.result .result-row{display:flex;justify-content:space-between;gap:12px;padding:4px 0}
+.result .result-row strong{white-space:nowrap}
+.send{margin-top:10px}
+.send button{flex:1;min-width:82px}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/kor-lunar@1.7/dist/kor-lunar.min.js"></script><style>
+.lunar-calendar{margin-top:14px;border:1px solid #e5e7eb;border-radius:16px;background:#fff;padding:12px}
+.cal-head{display:grid;grid-template-columns:44px 1fr 44px;align-items:center;gap:6px;margin-bottom:8px}
+.cal-head button{height:40px;border:1px solid #e5e7eb;border-radius:10px;background:#fff;font-size:20px}
+.cal-title{text-align:center;font-weight:850;font-size:16px}.cal-week,.cal-days{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.cal-week div{text-align:center;color:#7a818b;font-size:11px;padding:5px 0}.cal-day{min-height:43px;border:0;border-radius:10px;background:transparent;font-size:13px}
+.cal-day.other{color:#b7bcc4}.cal-day.today{outline:1px solid #315eea;font-weight:800}.cal-day.selected{background:#315eea;color:#fff;font-weight:850}
+.cal-help{font-size:11px;color:#7a818b;text-align:center;margin-top:7px}
+</style>
+<style>
+:root{
+ --wash:#f5f6f8!important;--card:#ffffff!important;--ink:#17191f!important;
+ --muted:#7a808b!important;--line:#e7e9ee!important;--accent:#3d63e9!important;
+ --accent-soft:#eef2ff!important;
+}
+body{background:var(--wash)!important;color:var(--ink)!important}
+.app{max-width:720px!important;padding:20px 16px 100px!important}
+h1,h2{letter-spacing:-.5px!important}h1{font-size:24px!important;margin-bottom:16px!important}
+h2{font-size:20px!important;margin:4px 0 4px!important}.note{color:var(--muted)!important}
+.tabs{
+ position:fixed!important;left:50%!important;transform:translateX(-50%)!important;bottom:0!important;
+ width:min(720px,100%)!important;margin:0!important;padding:8px 10px calc(8px + env(safe-area-inset-bottom))!important;
+ background:rgba(255,255,255,.97)!important;border-top:1px solid var(--line)!important;z-index:30!important;
+ display:grid!important;grid-template-columns:repeat(5,1fr)!important;gap:4px!important;
+}
+.tabs button{
+ border:0!important;background:transparent!important;border-radius:12px!important;color:#8a909a!important;
+ min-height:58px!important;padding:6px 2px!important;font-size:12px!important;font-weight:700!important;
+}
+.tabs button.on{background:var(--accent-soft)!important;color:var(--accent)!important}
+.bar,.card,.calc{
+ background:var(--card)!important;border:1px solid var(--line)!important;border-radius:20px!important;
+ box-shadow:0 1px 2px rgba(20,25,35,.025)!important;
+}
+.bar{padding:12px 14px!important}.card,.calc{padding:16px!important}
+.counts button,.seg button,.mini{
+ border:1px solid var(--line)!important;background:#fff!important;border-radius:12px!important;
+}
+.counts button.on,.seg button.on,.saveType.on,.lunarMode button.on{
+ background:var(--accent-soft)!important;border-color:#cbd6ff!important;color:var(--accent)!important;
+}
+.name{font-size:17px!important;border-bottom:1px solid var(--line)!important;padding:4px 2px 11px!important}
+.screen{background:transparent!important;border:0!important;padding:20px 4px 16px!important;margin:0!important}
+.expr{font-size:13px!important;color:var(--muted)!important}.display{font-size:38px!important;line-height:1.2!important}
+.transfer{gap:5px!important;margin:0 0 10px!important}
+.transfer button{
+ min-height:32px!important;padding:4px 8px!important;border-radius:9px!important;
+ font-size:11px!important;color:#666e79!important;background:#fff!important;border:1px solid var(--line)!important;
+}
+.keys{gap:9px!important}.keys button{
+ min-height:64px!important;border:0!important;border-radius:16px!important;background:#f0f2f5!important;
+ font-size:22px!important;font-weight:750!important;
+}
+.keys button.op{background:var(--accent-soft)!important;color:#244ab9!important}
+.keys button[data-k="="]{background:var(--accent)!important;color:#fff!important}
+.history{margin-top:10px!important}.history button{padding:8px 2px!important}
+.card label{font-size:14px!important;color:#353941!important;margin:14px 0!important}
+.card small{color:var(--muted)!important}
+.card input,.card select{
+ min-height:52px!important;border:1px solid var(--line)!important;border-radius:13px!important;
+ background:#fafbfc!important;padding:10px 12px!important;
+}
+.primary{
+ min-height:52px!important;border-radius:14px!important;background:var(--accent)!important;
+ color:#fff!important;border:0!important;font-weight:800!important;
+}
+.result{
+ border:1px solid var(--line)!important;border-radius:18px!important;background:#fff!important;
+ padding:16px!important;color:var(--ink)!important;
+}
+.result .big,.lunar-date-big{font-size:25px!important;letter-spacing:-.5px!important}
+.result-row{padding:7px 0!important}.send{gap:6px!important}
+.send button{
+ min-height:38px!important;border:1px solid var(--line)!important;background:#fff!important;border-radius:10px!important;
+ color:#555d68!important;font-size:11px!important;
+}
+.lunar-calendar{border:1px solid var(--line)!important;border-radius:18px!important;padding:14px!important}
+.cal-head button{border:1px solid var(--line)!important;border-radius:11px!important}
+.cal-day{min-height:45px!important;border-radius:11px!important}.cal-day.selected{background:var(--accent)!important}
+.cal-day.today{outline:1px solid var(--accent)!important}
+#fxStatus{background:#f7f8fa!important;border:1px solid var(--line)!important}
+@media(max-width:520px){
+ .app{padding:14px 11px 94px!important}
+ .card,.calc{padding:14px!important;border-radius:18px!important}
+ .display{font-size:36px!important}
+ .keys{gap:8px!important}.keys button{min-height:62px!important;font-size:22px!important;border-radius:15px!important}
+ .transfer button{min-height:30px!important;font-size:10.5px!important;padding:3px 7px!important}
+ .tabs{padding-left:6px!important;padding-right:6px!important}.tabs button{font-size:10.5px!important}
+}
+</style>
+<style>
+.transfer{margin-bottom:24px!important}
+@media(max-width:520px){.transfer{margin-bottom:22px!important}}
+</style></head><body><main><h2>멀티 금융 계산기</h2><div class="tabs"><button class="tab on" data-p="multi">🧮 멀티</button><button class="tab" data-p="saving">💰 예·적금</button><button class="tab" data-p="fx">💱 환율</button><button class="tab" data-p="loan">🏦 대출</button><button class="tab" data-p="lunar">🌙 음력</button></div>
+<section id="multi" class="pane on"><div class="card"><b>계산기 개수</b><div class="row" id="counts"><button data-n="1">1개</button><button class="on" data-n="2">2개</button><button data-n="3">3개</button><button data-n="4">4개</button></div></div><div id="grid" class="grid" style="margin-top:10px"></div></section>
+<section id="saving" class="pane"><h2>예·적금 계산</h2><p class="note">금액·금리·기간만 넣으면 만기 예상액을 계산합니다.</p><div class="card"><div class="row"><button id="dep" class="on">예금</button><button id="ins">적금</button></div><label><span id="amtLabel">예치할 금액</span><small>한 번에 맡길 원금</small><input id="sAmt" inputmode="numeric" placeholder="예: 10,000,000원"></label><div class="two"><label>연 이율 (%)<small>예: 3.5%</small><input id="sRate" inputmode="decimal" placeholder="3.5"></label><label>기간 (개월)<small>예: 12개월</small><input id="sMon" inputmode="numeric" placeholder="12"></label></div><label><input id="taxFree" type="checkbox" style="width:auto;min-height:auto"> 비과세</label><button id="sGo" class="primary">계산하기</button><div id="sOut" class="result">값을 입력하세요.</div><div id="sSend" class="send"></div><div class="note">일반과세는 이자소득세 15.4%를 단순 적용합니다.</div></div></section>
+<section id="fx" class="pane"><h2>환율 계산</h2><p class="note">자동 환율 조회 또는 직접 입력으로 계산합니다.</p><div class="card"><div class="two"><label>기준 통화<select id="from"><option>KRW</option><option>USD</option><option>JPY</option><option>EUR</option><option>CNY</option></select></label><label>변환 통화<select id="to"><option>USD</option><option>KRW</option><option>JPY</option><option>EUR</option><option>CNY</option></select></label></div><label>환전할 금액<small>바꾸려는 금액을 입력하세요</small><input id="fAmt" inputmode="decimal" placeholder="예: 100,000"></label><div id="fxStatus" class="note" style="margin:10px 0">환산하기를 누르면 최신 기준환율을 자동으로 조회합니다.</div><label id="rateLabel">적용 환율<small>자동으로 입력됩니다. 필요하면 직접 수정할 수 있습니다.</small><input id="fRate" inputmode="decimal" placeholder="자동 조회"></label><button id="fGo" class="primary">환산하기</button><div id="fOut" class="result">금액과 환율을 입력하세요.</div><div id="fSend" class="send"></div><div class="note">환산 버튼을 누르면 최신 기준환율을 자동 조회합니다. 조회 실패 시 직접 환율을 입력할 수 있습니다. 실제 환전액은 수수료에 따라 달라질 수 있습니다.</div></div></section>
+<section id="loan" class="pane"><h2>대출 계산</h2><p class="note">상환 방식에 따른 월 납입액과 총 이자를 확인합니다.</p><div class="card"><label>대출받을 금액<small>빌릴 전체 원금</small><input id="lAmt" inputmode="numeric" placeholder="예: 100,000,000원"></label><div class="two"><label>연 이율 (%)<small>예: 4.2%</small><input id="lRate" inputmode="decimal" placeholder="4.2"></label><label>대출 기간 (개월)<small>예: 360개월</small><input id="lMon" inputmode="numeric" placeholder="360"></label></div><label>상환 방식<select id="lType"><option value="equal">원리금균등</option><option value="principal">원금균등</option><option value="bullet">만기일시상환</option></select></label><button id="lGo" class="primary">계산하기</button><div id="lOut" class="result">값을 입력하세요.</div><div id="lSend" class="send"></div></div></section>
+
+<section id="lunar" class="pane">
+<h2>양력 · 음력 변환</h2>
+<p class="note">한국 음력 기준으로 양력과 음력을 서로 변환합니다.</p>
+<div class="card">
+  <div class="row lunarMode">
+    <button id="solarMode" class="on">양력 → 음력</button>
+    <button id="lunarMode">음력 → 양력</button>
+  </div>
+
+  <div id="solarInputBox">
+    <label>양력 날짜
+      <small>달력에서 변환할 날짜를 선택하세요.</small>
+      <input id="solarDate" type="date">
+    </label>
+  </div>
+
+  <div id="lunarInputBox" style="display:none">
+    <div class="two">
+      <label>음력 연도
+        <small>1890~2050</small>
+        <input id="lunarYear" inputmode="numeric" placeholder="예: 2026">
+      </label>
+      <label>음력 월
+        <small>1~12월</small>
+        <input id="lunarMonth" inputmode="numeric" placeholder="예: 8">
+      </label>
+    </div>
+    <label>음력 일
+      <small>1~30일</small>
+      <input id="lunarDay" inputmode="numeric" placeholder="예: 15">
+    </label>
+    <label style="display:flex;align-items:center;gap:8px">
+      <input id="lunarLeap" type="checkbox" style="width:auto;min-height:auto;margin:0"> 윤달
+    </label>
+  </div>
+
+  <button id="todayLunar" class="primary" style="background:#fff;color:#315eea;border:1px solid #cfd8ff">오늘 날짜 넣기</button>
+  <button id="lunarGo" class="primary">변환하기</button>
+  <div id="lunarOut" class="result">날짜를 선택한 뒤 변환하기를 눌러주세요.</div><div class="lunar-calendar"><div class="cal-head"><button id="calPrev" type="button">‹</button><div id="calTitle" class="cal-title"></div><button id="calNext" type="button">›</button></div><div class="cal-week"><div>일</div><div>월</div><div>화</div><div>수</div><div>목</div><div>금</div><div>토</div></div><div id="calDays" class="cal-days"></div><div class="cal-help">날짜를 누르면 위 양력 날짜에 바로 입력됩니다.</div></div>
+  <div class="note">한국천문연구원 공개 데이터를 기반으로 한 한국 음력 변환 라이브러리를 사용합니다. 지원 범위는 1890~2050년입니다.</div>
+</div>
+</section>
+<script>const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)],K='mfc1';let S={n:2,c:Array.from({length:4},(_,i)=>({name:'계산기 '+String.fromCharCode(65+i),e:'',v:0,h:[]}))};try{S=JSON.parse(localStorage.getItem(K))||S}catch{}const save=()=>localStorage.setItem(K,JSON.stringify(S)),F=n=>Number(n.toFixed(10)).toLocaleString('ko-KR',{maximumFractionDigits:10}),W=n=>Math.round(n).toLocaleString('ko-KR')+'원',N=id=>Number(($(id).value||'').replace(/,/g,''));function E(x){if(!x)return null;x=x.replace(/×/g,'*').replace(/÷/g,'/');if(!/^[0-9+\-*/. ]+$/.test(x))return null;try{let v=Function('return ('+x+')')();return Number.isFinite(v)?v:null}catch{return null}}$$('.tab').forEach(b=>b.onclick=()=>{$$('.tab').forEach(x=>x.classList.remove('on'));b.classList.add('on');$$('.pane').forEach(x=>x.classList.remove('on'));$('#'+b.dataset.p).classList.add('on')});function draw(){let g=$('#grid');g.innerHTML='';for(let i=0;i<S.n;i++){let s=S.c[i],d=document.createElement('div');d.className='calc';d.dataset.i=i;let tr='';for(let j=0;j<S.n;j++)if(i!==j)tr+=`<button data-from="${j}">${String.fromCharCode(65+j)} 결과</button>`;d.innerHTML=`<input class="name" value="${s.name}"><div class="screen"><div class="expr">${s.e||'계산식을 입력하세요'}</div><div class="display">${F(s.v)}</div></div><div class="send">${tr}</div><div class="keys">${['AC','⌫','%','÷','7','8','9','×','4','5','6','-','1','2','3','+','0','00','.','='].map(k=>`<button data-k="${k}" class="${'+-×÷='.includes(k)?'op':''}">${k}</button>`).join('')}</div><div class="history">${s.h.slice(0,5).join('<br>')||'계산 기록 없음'}</div>`;g.appendChild(d)}save()}$('#counts').onclick=e=>{let b=e.target.closest('button');if(!b)return;S.n=+b.dataset.n;$('#counts').querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));draw()};$('#grid').oninput=e=>{if(e.target.classList.contains('name')){S.c[+e.target.closest('.calc').dataset.i].name=e.target.value;save()}};$('#grid').onclick=e=>{let b=e.target.closest('button'),c=b?.closest('.calc');if(!b||!c)return;let s=S.c[+c.dataset.i];if(b.dataset.from!==undefined){let v=S.c[+b.dataset.from].v;if(s.e&&!/[+\-×÷]$/.test(s.e))s.e+='+';s.e+=v;s.v=E(s.e)??v;draw();return}let k=b.dataset.k;if(k==='AC'){s.e='';s.v=0}else if(k==='⌫'){s.e=s.e.slice(0,-1);s.v=E(s.e)??0}else if(k==='='){let v=E(s.e);if(v!==null){s.h.unshift(s.e+' = '+F(v));s.v=v;s.e=String(v)}}else if(k==='%'){let v=E(s.e);if(v!==null){s.v=v/100;s.e=String(s.v)}}else{s.e+=k;let v=E(s.e);if(v!==null)s.v=v}draw()};function sends(id,get){let e=$(id);e.innerHTML='';for(let i=0;i<4;i++){let b=document.createElement('button');b.textContent=String.fromCharCode(65+i)+'로 보내기';b.onclick=()=>{let v=get();if(Number.isFinite(v)){S.c[i].e=String(v);S.c[i].v=v;save();b.textContent='보냄 ✓'}};e.appendChild(b)}}let st='dep',lastS=null;$('#dep').onclick=()=>{st='dep';$('#dep').classList.add('on');$('#ins').classList.remove('on');$('#amtLabel').textContent='예치할 금액'};$('#ins').onclick=()=>{st='ins';$('#ins').classList.add('on');$('#dep').classList.remove('on');$('#amtLabel').textContent='매달 넣을 금액'};$('#sGo').onclick=()=>{let a=N('#sAmt'),r=N('#sRate')/100,m=N('#sMon');if(!(a>0&&r>=0&&m>0))return $('#sOut').textContent='올바른 값을 입력하세요.';let p,i;if(st==='dep'){p=a;i=a*r*m/12}else{p=a*m;i=0;for(let x=0;x<m;x++)i+=a*r*(m-x)/12}let tax=$('#taxFree').checked?0:i*.154;lastS=p+i-tax;$('#sOut').innerHTML=`<div class="big">만기 예상 ${W(lastS)}</div><div class="result-row"><span>총 원금</span><strong>${W(p)}</strong></div><div class="result-row"><span>세전 이자</span><strong>${W(i)}</strong></div><div class="result-row"><span>예상 세금</span><strong>${W(tax)}</strong></div><div class="result-row"><span>세후 이자</span><strong>${W(i-tax)}</strong></div>`;sends('#sSend',()=>lastS)};function resetFxRate(){ $('#fRate').value=''; $('#fxStatus').textContent='환산하기를 누르면 최신 기준환율을 자동으로 조회합니다.'; }
+$('#from').onchange=resetFxRate; $('#to').onchange=resetFxRate;
+let lastF=null;
+$('#fGo').onclick=async()=>{
+  let a=N('#fAmt'),from=$('#from').value,to=$('#to').value;
+  if(!(a>=0))return $('#fOut').textContent='환전할 금액을 입력하세요.';
+  let r=1,date='';
+  $('#fGo').disabled=true; $('#fGo').textContent='환율 조회 중…';
+  try{
+    if(from!==to){
+      let res=await fetch('https://api.frankfurter.dev/v2/rate/'+from.toLowerCase()+'/'+to.toLowerCase());
+      if(!res.ok)throw new Error('rate');
+      let data=await res.json(); r=Number(data.rate); date=data.date||'';
+      if(!(r>0))throw new Error('rate');
+      $('#fRate').value=Number(r.toFixed(8));
+      $('#fxStatus').textContent='자동 환율 적용'+(date?' · 기준일 '+date:'');
+    }else{
+      r=1; $('#fRate').value='1'; $('#fxStatus').textContent='같은 통화이므로 환율 1을 적용했습니다.';
+    }
+  }catch(err){
+    r=N('#fRate');
+    if(!(r>0)){
+      $('#fxStatus').textContent='자동 환율 조회에 실패했습니다. 아래 적용 환율을 직접 입력한 뒤 다시 눌러주세요.';
+      $('#fOut').textContent='환율을 직접 입력해 주세요.';
+      $('#fGo').disabled=false; $('#fGo').textContent='환산하기'; return;
+    }
+    $('#fxStatus').textContent='직접 입력한 환율을 적용했습니다.';
+  }
+  lastF=a*r;
+  $('#fOut').innerHTML=`<div class="big">${F(lastF)} ${to}</div><div class="result-row"><span>${F(a)} ${from}</span><strong>1 ${from} = ${F(r)} ${to}</strong></div>`;
+  sends('#fSend',()=>lastF);
+  $('#fGo').disabled=false; $('#fGo').textContent='환산하기';
+};let lastL=null;$('#lGo').onclick=()=>{let p=N('#lAmt'),ar=N('#lRate')/100,n=N('#lMon'),t=$('#lType').value;if(!(p>0&&ar>=0&&n>0))return $('#lOut').textContent='올바른 값을 입력하세요.';let mr=ar/12,first,ti,total;if(t==='equal'){let pay=mr? p*mr*Math.pow(1+mr,n)/(Math.pow(1+mr,n)-1):p/n;first=pay;total=pay*n;ti=total-p}else if(t==='principal'){first=p/n+p*mr;ti=(p/n)*mr*n*(n+1)/2;total=p+ti}else{first=p*mr;ti=p*mr*n;total=p+ti}lastL=total;$('#lOut').innerHTML=`<div class="big">${t==='bullet'?'월 이자':t==='principal'?'첫 달 납입':'월 납입'} 약 ${W(first)}</div><div class="result-row"><span>대출 원금</span><strong>${W(p)}</strong></div><div class="result-row"><span>총 이자</span><strong>${W(ti)}</strong></div><div class="result-row"><span>총 상환액</span><strong>${W(total)}</strong></div>`;sends('#lSend',()=>lastL)};
+function commaMoney(el){
+  el.classList.add('money-input');
+  el.addEventListener('input',()=>{
+    let raw=el.value.replace(/[^0-9.]/g,'');
+    if(!raw){el.value='';return}
+    let parts=raw.split('.');
+    parts[0]=Number(parts[0]||0).toLocaleString('ko-KR');
+    el.value=parts.length>1?parts[0]+'.'+parts.slice(1).join(''):parts[0];
+  });
+}
+['#sAmt','#fAmt','#lAmt'].forEach(id=>commaMoney($(id)));
+
+let lunarDirection='solar';
+function setLunarMode(mode){
+  lunarDirection=mode;
+  $('#solarMode').classList.toggle('on',mode==='solar');
+  $('#lunarMode').classList.toggle('on',mode==='lunar');
+  $('#solarInputBox').style.display=mode==='solar'?'block':'none';
+  $('#lunarInputBox').style.display=mode==='lunar'?'block':'none';
+  $('#lunarOut').textContent='날짜를 선택한 뒤 변환하기를 눌러주세요.';
+}
+$('#solarMode').onclick=()=>setLunarMode('solar');
+$('#lunarMode').onclick=()=>setLunarMode('lunar');
+function localToday(){
+  let d=new Date(), y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),day=String(d.getDate()).padStart(2,'0');
+  return y+'-'+m+'-'+day;
+}
+$('#solarDate').value=localToday();
+let calView=(()=>{let d=new Date();return {y:d.getFullYear(),m:d.getMonth()+1}})();
+function ymd(y,m,d){return y+'-'+String(m).padStart(2,'0')+'-'+String(d).padStart(2,'0')}
+function renderCalendar(){
+ $('#calTitle').textContent=calView.y+'년 '+calView.m+'월';
+ let box=$('#calDays');box.innerHTML='';
+ let first=new Date(calView.y,calView.m-1,1).getDay(),last=new Date(calView.y,calView.m,0).getDate(),prevLast=new Date(calView.y,calView.m-1,0).getDate();
+ let selected=$('#solarDate').value,today=localToday();
+ for(let cell=0;cell<42;cell++){
+  let y=calView.y,m=calView.m,d,other=false;
+  if(cell<first){d=prevLast-first+cell+1;m--;other=true;if(m<1){m=12;y--}}
+  else if(cell>=first+last){d=cell-first-last+1;m++;other=true;if(m>12){m=1;y++}}
+  else d=cell-first+1;
+  let date=ymd(y,m,d),b=document.createElement('button');b.type='button';b.textContent=d;
+  b.className='cal-day'+(other?' other':'')+(date===today?' today':'')+(date===selected?' selected':'');
+  b.onclick=()=>{$('#solarDate').value=date;calView={y,m};if(lunarDirection!=='solar')setLunarMode('solar');renderCalendar()};
+  box.appendChild(b);
+ }
+}
+$('#calPrev').onclick=()=>{if(--calView.m<1){calView.m=12;calView.y--}renderCalendar()};
+$('#calNext').onclick=()=>{if(++calView.m>12){calView.m=1;calView.y++}renderCalendar()};
+$('#solarDate').onchange=()=>{let v=$('#solarDate').value;if(v){let a=v.split('-').map(Number);calView={y:a[0],m:a[1]};renderCalendar()}};
+renderCalendar();
+$('#todayLunar').onclick=()=>{
+ let d=new Date(),today=localToday();
+ if(lunarDirection==='solar'){
+  $('#solarDate').value=today;calView={y:d.getFullYear(),m:d.getMonth()+1};renderCalendar();
+ }else{
+  try{
+   if(!window.korLunar)throw new Error('library');
+   let r=korLunar.toLunar(d.getFullYear(),d.getMonth()+1,d.getDate());
+   $('#lunarYear').value=r.year;$('#lunarMonth').value=r.month;$('#lunarDay').value=r.day;$('#lunarLeap').checked=!!r.isLeapMonth;
+  }catch(e){$('#lunarOut').textContent='음력 변환 모듈을 불러오지 못했습니다. 인터넷 연결 후 다시 시도해 주세요.'}
+ }
+};
+function weekdayKo(y,m,d){return ['일','월','화','수','목','금','토'][new Date(y,m-1,d).getDay()]+'요일'}
+$('#lunarGo').onclick=()=>{
+  try{
+    if(!window.korLunar) throw new Error('라이브러리를 불러오지 못했습니다.');
+    if(lunarDirection==='solar'){
+      let v=$('#solarDate').value;
+      if(!v) return $('#lunarOut').textContent='양력 날짜를 선택하세요.';
+      let [y,m,d]=v.split('-').map(Number);
+      let r=korLunar.toLunar(y,m,d);
+      $('#lunarOut').innerHTML=`<div class="lunar-date-big">음력 ${r.year}년 ${r.isLeapMonth?'윤':''}${r.month}월 ${r.day}일 <span class="lunar-badge">${r.isLeapMonth?'윤달':'평달'}</span></div><div class="result-row"><span>입력한 양력</span><strong>${y}년 ${m}월 ${d}일</strong></div><div class="result-row"><span>요일</span><strong>${weekdayKo(y,m,d)}</strong></div><div class="result-row"><span>간지</span><strong>${r.secha||'-'}년 · ${r.iljin||'-'}일</strong></div>`;
+    }else{
+      let y=Number($('#lunarYear').value),m=Number($('#lunarMonth').value),d=Number($('#lunarDay').value),leap=$('#lunarLeap').checked;
+      if(!(y>=1890&&y<=2050&&m>=1&&m<=12&&d>=1&&d<=30)) return $('#lunarOut').textContent='음력 연·월·일을 올바르게 입력하세요.';
+      if(korLunar.LunarCalendar && !korLunar.LunarCalendar.isValid(y,m,d,leap)) return $('#lunarOut').textContent='존재하지 않는 음력 날짜이거나 해당 월은 윤달이 아닙니다.';
+      let r=korLunar.toSolar(y,m,d,leap);
+      $('#lunarOut').innerHTML=`<div class="lunar-date-big">양력 ${r.year}년 ${r.month}월 ${r.day}일</div><div class="result-row"><span>입력한 음력</span><strong>${y}년 ${leap?'윤':''}${m}월 ${d}일</strong></div><div class="result-row"><span>구분</span><strong>${leap?'윤달':'평달'}</strong></div><div class="result-row"><span>요일</span><strong>${weekdayKo(r.year,r.month,r.day)}</strong></div>`;
+    }
+  }catch(err){
+    $('#lunarOut').textContent='변환 중 오류가 발생했습니다. 인터넷 연결을 확인하거나 입력 날짜를 다시 확인하세요.';
+  }
+};
+draw();$('#counts').querySelectorAll('button').forEach(x=>x.classList.toggle('on',+x.dataset.n===S.n));</script></main></body></html>
